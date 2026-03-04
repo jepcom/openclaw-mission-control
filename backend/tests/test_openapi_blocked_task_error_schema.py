@@ -23,5 +23,7 @@ def test_openapi_blocked_task_error_includes_code_field() -> None:
     has_string_branch = any(branch.get("type") == "string" for branch in any_of)
     assert has_string_branch
 
-    has_null_branch = any(branch.get("type") == "null" or branch.get("nullable") is True for branch in any_of)
+    has_null_branch = any(
+        branch.get("type") == "null" or branch.get("nullable") is True for branch in any_of
+    )
     assert has_null_branch
