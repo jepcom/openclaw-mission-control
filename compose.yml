@@ -16,6 +16,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    networks:
+      - coolify
 
   redis:
     image: redis:7-alpine
@@ -26,6 +28,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    networks:
+      - coolify
 
   backend:
     build:
@@ -51,6 +55,8 @@ services:
         condition: service_healthy
     expose:
       - "8000"
+    networks:
+      - coolify
 
   frontend:
     build:
@@ -71,6 +77,8 @@ services:
       - backend
     expose:
       - "3000"
+    networks:
+      - coolify
     develop:
       watch:
         # Rebuild frontend image when UI source or build config changes.
@@ -110,6 +118,13 @@ services:
       RQ_DISPATCH_THROTTLE_SECONDS: ${RQ_DISPATCH_THROTTLE_SECONDS:-2.0}
       RQ_DISPATCH_MAX_RETRIES: ${RQ_DISPATCH_MAX_RETRIES:-3}
     restart: unless-stopped
+    networks:
+      - coolify
 
 volumes:
   postgres_data:
+
+networks:
+  coolify:
+    external: true
+    name: coolify
