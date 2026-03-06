@@ -41,8 +41,8 @@ services:
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       BASE_URL: ${BASE_URL:-https://agents_backend.exerun.com}
       DB_AUTO_MIGRATE: ${DB_AUTO_MIGRATE:-true}
-      AUTH_MODE: ${AUTH_MODE}
-      LOCAL_AUTH_TOKEN: ${LOCAL_AUTH_TOKEN}
+      AUTH_MODE: ${AUTH_MODE:-local}
+      LOCAL_AUTH_TOKEN: ${LOCAL_AUTH_TOKEN:-dy420682mj4XV74EKawaJUp4AEXJtFN8Aj8SMLbLXaRJiApNZBdbRz6gXqYHEmb5z-U}
       RQ_REDIS_URL: redis://redis:6379/0
     depends_on:
       db:
@@ -103,8 +103,8 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-mission_control}
-      AUTH_MODE: ${AUTH_MODE}
-      LOCAL_AUTH_TOKEN: ${LOCAL_AUTH_TOKEN}
+      AUTH_MODE: ${AUTH_MODE:-local}
+      LOCAL_AUTH_TOKEN: ${LOCAL_AUTH_TOKEN:-dy420682mj4XV74EKawaJUp4AEXJtFN8Aj8SMLbLXaRJiApNZBdbRz6gXqYHEmb5z-U}
       RQ_REDIS_URL: redis://redis:6379/0
       RQ_QUEUE_NAME: ${RQ_QUEUE_NAME:-default}
       RQ_DISPATCH_THROTTLE_SECONDS: ${RQ_DISPATCH_THROTTLE_SECONDS:-2.0}
