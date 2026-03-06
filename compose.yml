@@ -38,8 +38,8 @@ services:
     environment:
       # Override localhost defaults for container networking
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-mission_control}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
-      BASE_URL: ${BASE_URL:-https://agents_backend.exerun.com}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://agents.exerun.com}
+      BASE_URL: ${BASE_URL:-https://agents.exerun.com}
       DB_AUTO_MIGRATE: ${DB_AUTO_MIGRATE:-true}
       AUTH_MODE: ${AUTH_MODE:-local}
       LOCAL_AUTH_TOKEN: ${LOCAL_AUTH_TOKEN:-dy420682mj4XV74EKawaJUp4AEXJtFN8Aj8SMLbLXaRJiApNZBdbRz6gXqYHEmb5z-U}
@@ -51,12 +51,18 @@ services:
         condition: service_healthy
     expose:
       - "8000"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.mission-control-api.rule: "Host(`agents.exerun.com`) && PathPrefix(`/api`)"
+      traefik.http.routers.mission-control-api.entrypoints: websecure
+      traefik.http.routers.mission-control-api.tls: "true"
+      traefik.http.services.mission-control-api.loadbalancer.server.port: "8000"
 
   frontend:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-auto}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
         NEXT_PUBLIC_AUTH_MODE: ${AUTH_MODE}
     # Optional, user-managed env file.
     # IMPORTANT: do NOT load `.env.example` here because it contains non-empty
@@ -65,12 +71,18 @@ services:
       - path: ./frontend/.env
         required: false
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-auto}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
       NEXT_PUBLIC_AUTH_MODE: ${AUTH_MODE}
     depends_on:
       - backend
     expose:
       - "3000"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.mission-control-frontend.rule: Host(`agents.exerun.com`)
+      traefik.http.routers.mission-control-frontend.entrypoints: websecure
+      traefik.http.routers.mission-control-frontend.tls: "true"
+      traefik.http.services.mission-control-frontend.loadbalancer.server.port: "3000"
     develop:
       watch:
         # Rebuild frontend image when UI source or build config changes.
