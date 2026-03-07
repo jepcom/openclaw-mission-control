@@ -1,4 +1,4 @@
-name: openclaw-mission-control
+version: '3.9'
 
 services:
   db:
@@ -37,8 +37,6 @@ services:
       # like `backend/templates/`.
       context: .
       dockerfile: backend/Dockerfile
-    env_file:
-      - ./backend/.env
     environment:
       # Override localhost defaults for container networking
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-mission_control}
@@ -73,12 +71,6 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
         NEXT_PUBLIC_AUTH_MODE: ${AUTH_MODE}
-    # Optional, user-managed env file.
-    # IMPORTANT: do NOT load `.env.example` here because it contains non-empty
-    # placeholder Clerk keys, which can accidentally flip Clerk "on".
-    env_file:
-      - path: ./frontend/.env
-        required: false
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
       NEXT_PUBLIC_AUTH_MODE: ${AUTH_MODE}
@@ -95,31 +87,12 @@ services:
       traefik.http.routers.mission-control-frontend.tls: "true"
       traefik.http.routers.mission-control-frontend.priority: "10"
       traefik.http.services.mission-control-frontend.loadbalancer.server.port: "3000"
-    develop:
-      watch:
-        # Rebuild frontend image when UI source or build config changes.
-        - action: rebuild
-          path: ./frontend/src
-        - action: rebuild
-          path: ./frontend/package.json
-        - action: rebuild
-          path: ./frontend/package-lock.json
-        - action: rebuild
-          path: ./frontend/next.config.ts
-        - action: rebuild
-          path: ./frontend/postcss.config.js
-        - action: rebuild
-          path: ./frontend/tailwind.config.cjs
-        - action: rebuild
-          path: ./frontend/tsconfig.json
 
   webhook-worker:
     build:
       context: .
       dockerfile: backend/Dockerfile
     command: ["python", "scripts/rq-docker", "worker"]
-    env_file:
-      - ./backend/.env
     depends_on:
       redis:
         condition: service_healthy
