@@ -58,7 +58,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.mission-control-api.rule: "Host(`agents.exerun.com`) && PathPrefix(`/api`)"
-      traefik.http.routers.mission-control-api.entrypoints: websecure
+      traefik.http.routers.mission-control-api.entrypoints: https
       traefik.http.routers.mission-control-api.tls: "true"
       traefik.http.routers.mission-control-api.priority: "20"
       traefik.http.services.mission-control-api.loadbalancer.server.port: "8000"
@@ -83,7 +83,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.mission-control-frontend.rule: "Host(`agents.exerun.com`) && !PathPrefix(`/api`)"
-      traefik.http.routers.mission-control-frontend.entrypoints: websecure
+      traefik.http.routers.mission-control-frontend.entrypoints: https
       traefik.http.routers.mission-control-frontend.tls: "true"
       traefik.http.routers.mission-control-frontend.priority: "10"
       traefik.http.services.mission-control-frontend.loadbalancer.server.port: "3000"
